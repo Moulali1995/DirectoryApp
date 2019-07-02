@@ -43,15 +43,37 @@ class App extends React.Component {
   }
   handleTreetraverse(index) {
     this.setState({ currentnode: index });
-    this.setState({ currentree: this.state.tree[index] }, () =>
+    const currentree = this.state.tree;
+    console.log(currentree[0]);
+    this.setState({ currentree: currentree }, () =>
       console.log(this.state.currentree)
     );
-    const subtreeview = this.state.tree.map((item, index) => {
+    const subtreeview = this.state.currentree.map((item, index) => {
       return (
         <div>
           <button key={index} onClick={() => this.handleTreetraverse(index)}>
             {item.child[index].node}
           </button>
+          <br />
+          {item.child.length !== 0 ? (
+            <div>
+              {item.child.map((item, index) => {
+                return (
+                  <div>
+                    <button
+                      key={index}
+                      onClick={() => this.handleTreetraverse(index)}
+                    >
+                      {item.node}
+                    </button>
+                    <br />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p />
+          )}{" "}
           <br />
         </div>
         // </button> // <button key={index} onClick={() => this.handleTreetraverse(index)}>
@@ -67,6 +89,7 @@ class App extends React.Component {
           <button key={index} onClick={() => this.handleTreetraverse(index)}>
             {item.node}
           </button>
+          <br />
           {/* {item.child.length !== 0 ? (
             <div>
               {item.child.map((item, index) => {
