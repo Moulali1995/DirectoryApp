@@ -6,10 +6,20 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tree: [{ node: "/", child: [] }, { node: "home", child: ["folder1"] }],
+      tree: [
+        {
+          node: "/",
+          child: [
+            { node: "home", child: [{ node: "folder1", child: [] }] },
+            { node: "admin", child: [{ node: "admin1", child: [] }] }
+          ]
+        }
+      ],
       treeview: [],
       value: "",
-      currentnode: ""
+      currentnode: "",
+      subtreeview: [],
+      currentree: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -25,40 +35,51 @@ class App extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     alert("Folder added");
-    const newFolder = [...this.state.tree, this.state.value];
+    const newFolder = [
+      ...this.state.tree,
+      { node: this.state.value, child: [] }
+    ];
     this.setState({ tree: newFolder }, () => this.addFolder());
   }
   handleTreetraverse(index) {
     this.setState({ currentnode: index });
-    const treeview = this.state.tree.map((item, index) => {
+    this.setState({ currentree: this.state.tree[index] }, () =>
+      console.log(this.state.currentree)
+    );
+    const subtreeview = this.state.tree.map((item, index) => {
       return (
-        <button key={index} onClick={this.handleTreetraverse(index)}>
-          {item}
-        </button>
+        <div>
+          <button key={index} onClick={() => this.handleTreetraverse(index)}>
+            {item.child[index].node}
+          </button>
+          <br />
+        </div>
+        // </button> // <button key={index} onClick={() => this.handleTreetraverse(index)}>
       );
     });
-    this.setState({ treeview: treeview });
+    console.log(subtreeview);
+    this.setState({ subtreeview: subtreeview });
   }
   addFolder() {
     const treeview = this.state.tree.map((item, index) => {
       return (
         <div>
-          <button key={index} onClick={this.handleTreetraverse(index)}>
+          <button key={index} onClick={() => this.handleTreetraverse(index)}>
             {item.node}
           </button>
-          {item.child.length !== 0 ? (
+          {/* {item.child.length !== 0 ? (
             <div>
               {item.child.map((item, index) => {
                 return (
-                  <button key={index} onClick={this.handleTreetraverse(index)}>
-                    {item}
+                  <button key={index} onClick={()=>this.handleTreetraverse(index)}>
+                    {item.node}
                   </button>
                 );
               })}
             </div>
           ) : (
             <p />
-          )}
+          )} */}
         </div>
       );
     });
@@ -78,6 +99,7 @@ class App extends React.Component {
           <input type="submit" value="Submit" />
         </form>
         {this.state.treeview}
+        {this.state.subtreeview}
       </div>
     );
   }
