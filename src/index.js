@@ -7,17 +7,18 @@ class App extends React.Component {
     super(props);
     this.state = {
       tree: [
-        {
-          node: "/",
-          child: [
-            { node: "home", child: [{ node: "folder1", child: [] }] },
-            { node: "admin", child: [{ node: "admin1", child: [] }] }
-          ]
-        }
+        { node: "/", pnode: null },
+        { node: "home", pnode: "/" },
+        { node: "Songs", pnode: "/" },
+        { node: "Videos", pnode: "/" },
+        { node: "Songs1", pnode: "Songs" },
+        { node: "Songs2", pnode: "Songs" },
+        { node: "Videos1", pnode: "Videos" },
+        { node: "Videos2", pnode: "Videos" }
       ],
       treeview: [],
       value: "",
-      currentnode: "",
+      currentnode: "/",
       subtreeview: [],
       currentree: []
     };
@@ -37,73 +38,51 @@ class App extends React.Component {
     alert("Folder added");
     const newFolder = [
       ...this.state.tree,
-      { node: this.state.value, child: [] }
+      { node: this.state.value, pnode: this.state.currentnode }
     ];
-    this.setState({ tree: newFolder }, () => this.addFolder());
+    this.setState({ tree: newFolder }, () => {
+      this.addFolder();
+      this.handleTreetraverse(this.state.currentnode);
+    });
   }
-  handleTreetraverse(index) {
-    this.setState({ currentnode: index });
-    const currentree = this.state.tree;
-    console.log(currentree[0]);
-    this.setState({ currentree: currentree }, () =>
-      console.log(this.state.currentree)
-    );
-    const subtreeview = this.state.currentree.map((item, index) => {
-      return (
+  handleTreetraverse(node) {
+    this.setState({ currentnode: node });
+    let present = false;
+    this.state.tree.forEach(item => {
+      if (item.pnode === node) present = true;
+    });
+    const subtreeview = this.state.tree.map((item, index) => {
+      return item.pnode === node ? (
         <div>
-          <button key={index} onClick={() => this.handleTreetraverse(index)}>
-            {item.child[index].node}
+          <button
+            key={index}
+            onClick={() => this.handleTreetraverse(item.node)}
+          >
+            >{item.node}
           </button>
           <br />
-          {item.child.length !== 0 ? (
-            <div>
-              {item.child.map((item, index) => {
-                return (
-                  <div>
-                    <button
-                      key={index}
-                      onClick={() => this.handleTreetraverse(index)}
-                    >
-                      {item.node}
-                    </button>
-                    <br />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p />
-          )}{" "}
-          <br />
         </div>
-        // </button> // <button key={index} onClick={() => this.handleTreetraverse(index)}>
+      ) : (
+        <p />
       );
     });
-    console.log(subtreeview);
-    this.setState({ subtreeview: subtreeview });
+    if (present === false)
+      this.setState({ subtreeview: "No sub-folders found" });
+    else this.setState({ subtreeview: subtreeview });
   }
   addFolder() {
     const treeview = this.state.tree.map((item, index) => {
-      return (
+      return item.node === "/" ? (
         <div>
-          <button key={index} onClick={() => this.handleTreetraverse(index)}>
+          <button
+            key={index}
+            onClick={() => this.handleTreetraverse(item.node)}
+          >
             {item.node}
           </button>
-          <br />
-          {/* {item.child.length !== 0 ? (
-            <div>
-              {item.child.map((item, index) => {
-                return (
-                  <button key={index} onClick={()=>this.handleTreetraverse(index)}>
-                    {item.node}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <p />
-          )} */}
         </div>
+      ) : (
+        <p />
       );
     });
     this.setState({ treeview: treeview });
@@ -111,6 +90,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <h3>Folder Management</h3>
         <form onSubmit={this.handleSubmit}>
           <label>
             <input
@@ -121,6 +101,9 @@ class App extends React.Component {
           </label>
           <input type="submit" value="Submit" />
         </form>
+        <hr />
+        PWD : {this.state.currentnode}
+        <hr />
         {this.state.treeview}
         {this.state.subtreeview}
       </div>
