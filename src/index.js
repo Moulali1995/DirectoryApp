@@ -115,7 +115,6 @@ class App extends React.Component {
     return (
       <div className="App">
         <h3>Folder Management</h3>
-        <input type="button" value="Back" onClick={this.handleBack} />
         <form onSubmit={this.handleSubmit}>
           <label>
             <input
@@ -127,7 +126,8 @@ class App extends React.Component {
           <input type="submit" value="Submit" />
         </form>
         <hr />
-        PWD : {this.state.currentnode}
+        <input type="button" value="Back" onClick={this.handleBack} />
+        &nbsp;&nbsp; <b>PWD : {this.state.currentnode} </b>
         <hr />
         {this.state.treeview}
         {this.state.showprevioustree
