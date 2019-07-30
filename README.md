@@ -1,4 +1,4 @@
-# Hubble-DirectoryApp
+# DirectoryApp
 Created with CodeSandbox
 
 A React application for Directory management.
